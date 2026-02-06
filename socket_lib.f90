@@ -34,8 +34,11 @@ module socket_lib
 #endif
 
     ! Socket library constants
-    integer(c_int), parameter :: AF_INET = 2, SOCK_STREAM = 1, IPPROTO_TCP = 6
-    integer(c_int), parameter :: INADDR_ANY = 0, SOMAXCONN = 5
+    integer(c_int), parameter :: AF_INET = 2
+    integer(c_int), parameter :: SOCK_STREAM = 1
+    integer(c_int), parameter :: IPPROTO_TCP = 6
+    integer(c_int), parameter :: INADDR_ANY = 0
+    integer(c_int), parameter :: SOMAXCONN = 5
     integer(c_int), parameter :: SOL_SOCKET = 1
     integer(c_int), parameter :: SO_REUSEADDR = 2
     integer(c_int), parameter :: SO_EXCLUSIVEADDRUSE = 4
@@ -139,7 +142,6 @@ module socket_lib
 
         function htonl(hostlong) bind(C, name="htonl")
             use iso_c_binding
-            implicit none
             integer(c_int), value :: hostlong  ! Input: 32-bit integer in host byte order
             integer(c_int) :: htonl            ! Output: Converted 32-bit integer in network byte order
         end function
@@ -166,7 +168,6 @@ module socket_lib
 
         function setsockopt(sockfd, level, optname, optval, optlen) bind(C, name="setsockopt")
             use, intrinsic :: iso_c_binding
-            implicit none
             integer(c_int), value :: sockfd, level, optname
             type(c_ptr), value :: optval
             integer(c_int), value :: optlen
@@ -175,7 +176,6 @@ module socket_lib
 
         function inet_addr(cp) bind(C, name="inet_addr")
             use iso_c_binding
-            implicit none
             character(kind=c_char), intent(in) :: cp(*)  ! C string (null-terminated)
             integer(c_int) :: inet_addr
         end function
