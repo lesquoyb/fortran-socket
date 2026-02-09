@@ -7,7 +7,7 @@ It is composed of a single file: `socket_lib.f90` that you just have to add to y
 This module supports both POSIX sockets (Linux, macOS) and Winsock (Windows) with the same API, the platform differences are handled internally which means you don't need to litter your code with `#ifdef` checks.
 
 
-### Exposed items (high level)
+### Exposed items
 - Constants: `AF_INET`, `SOCK_STREAM`, `IPPROTO_TCP`, `INADDR_ANY`, `SOMAXCONN`, `SOL_SOCKET`, `SO_REUSEADDR`, `SO_EXCLUSIVEADDRUSE`, `INET_ADDRSTRLEN`, `TCP_NODELAY`
 - Types: `sockaddr_in`, `in_addr` (plus Windows `WSADATA` when relevant)
 - Functions: `socket`, `bind`, `listen`, `accept`, `send`, `recv`, `close`, `setsockopt`, `htons`, `ntohs`, `htonl`, `inet_addr`, `inet_ntoa`, `getsockname`, `get_errno`, and Windows helpers `WSAStartup`, `WSACleanup`, `WSAGetLastError`
