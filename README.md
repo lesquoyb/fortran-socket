@@ -39,7 +39,17 @@ Add the module to your program and call the API in the same way you would in C.
 ### Minimal TCP server (blocking, single client)
 You can find in the repository an example of a simple TCP server using `socket_lib`: [example-server.f90](example-server.f90).
 This program creates a server on port 8081 then waits for a client to connect, when the first client is connected it will send a message to it, wait 5 seconds and close.
-
+If everything works as expected you should see this in the console on Windows:
+```
+ Socket created successfully
+ Socket options set successfully
+ Socket bound successfully to port   8181
+ Listening for incoming connections
+ Client connected
+ Message sent to client, waiting 5 seconds before closing
+ Winsock cleaned up successfully
+```
+And the same on Linux/macOS without the Winsock lines.
 
 ## Notes & pitfalls
 - This is a thin binding. You are responsible for error handling, byte order, and memory safety.
