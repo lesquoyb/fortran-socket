@@ -1,14 +1,14 @@
 # fortran-socket
 Use C sockets directly in your fortran programs with this simple and portable binding!
 
-## What is `socket_lib`?
-`socket_lib` is a fortran binding of the C socket library, this means that it makes available socket functions and structures in your fortran programs. 
-The goal of this module is to provide a simple and portable way to use sockets in Fortran to build networked applications more easily.
+## What is fortran-socket?
+fortran-socket is a fortran binding of the C socket library, this means that it makes available socket functions and structures in your fortran programs.
+It is composed of a single file: `socket_lib.f90` that you just have to add to your project to benefit from a simple and portable way to use sockets in Fortran to build networked applications more easily.
 This module supports both POSIX sockets (Linux, macOS) and Winsock (Windows) with the same API, the platform differences are handled internally which means you don't need to litter your code with `#ifdef` checks.
 
 
 ### Exposed items (high level)
-- Constants: `AF_INET`, `SOCK_STREAM`, `IPPROTO_TCP`, `INADDR_ANY`, `SOMAXCONN`, `SOL_SOCKET`, `SO_REUSEADDR`, `SO_EXCLUSIVEADDRUSE`, `INET_ADDRSTRLEN`
+- Constants: `AF_INET`, `SOCK_STREAM`, `IPPROTO_TCP`, `INADDR_ANY`, `SOMAXCONN`, `SOL_SOCKET`, `SO_REUSEADDR`, `SO_EXCLUSIVEADDRUSE`, `INET_ADDRSTRLEN`, `TCP_NODELAY`
 - Types: `sockaddr_in`, `in_addr` (plus Windows `WSADATA` when relevant)
 - Functions: `socket`, `bind`, `listen`, `accept`, `send`, `recv`, `close`, `setsockopt`, `htons`, `ntohs`, `htonl`, `inet_addr`, `inet_ntoa`, `getsockname`, `get_errno`, and Windows helpers `WSAStartup`, `WSACleanup`, `WSAGetLastError`
 
