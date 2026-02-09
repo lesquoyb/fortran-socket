@@ -13,10 +13,7 @@ This module supports both POSIX sockets (Linux, macOS) and Winsock (Windows) wit
 - Functions: `socket`, `bind`, `listen`, `accept`, `send`, `recv`, `close`, `setsockopt`, `htons`, `ntohs`, `htonl`, `inet_addr`, `inet_ntoa`, `getsockname`, `get_errno`, and Windows helpers `WSAStartup`, `WSACleanup`, `WSAGetLastError`
 
 ## Requirements
-- A Fortran compiler with `iso_c_binding` support (gfortran, ifx, etc.)
-- A C preprocessor pass enabled for platform detection
-  - gfortran: `-cpp`
-  - ifx/ifort: `/fpp` or `-fpp`
+A Fortran compiler with `iso_c_binding` support (gfortran, ifx, etc.)
 
 ## Building
 ### Linux/macOS (POSIX sockets)
