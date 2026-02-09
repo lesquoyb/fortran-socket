@@ -43,6 +43,7 @@ module socket_lib
     integer(c_int), parameter :: SO_REUSEADDR = 2
     integer(c_int), parameter :: SO_EXCLUSIVEADDRUSE = 4
     integer(c_int), parameter :: INET_ADDRSTRLEN = 16
+    integer(c_int), parameter :: TCP_NODELAY = 1
 
 
     ! TYPES BINDING
