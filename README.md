@@ -16,6 +16,8 @@ This module supports both POSIX sockets (Linux, macOS) and Winsock (Windows) wit
 A Fortran compiler with `iso_c_binding` support (gfortran, ifx, etc.)
 
 ## Building
+Let's say your program is in the `my_program.f90` file, then you can compile everything like so:
+
 ### Linux/macOS (POSIX sockets)
 ```
 gfortran -cpp socket_lib.f90 my_program.f90 -o my_program
