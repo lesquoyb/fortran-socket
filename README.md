@@ -25,7 +25,7 @@ gfortran -cpp socket_lib.f90 my_program.f90 -o my_program
 
 ### Windows (Winsock)
 ```
-gfortran -cpp -D_WIN32 socket_lib.f90 my_program.f90 -lws2_32 -o my_program.exe
+gfortran -cpp -D_WIN32 socket_lib.f90 my_program.f90 -lwsock32 -o my_program.exe
 ```
 
 > **Important:** gfortran's Fortran preprocessor does not automatically define `_WIN32` on Windows, so you must pass `-D_WIN32` explicitly. You also need `-lws2_32` to link against the Winsock library.
