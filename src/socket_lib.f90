@@ -23,11 +23,12 @@
 module socket_lib
 
     use iso_c_binding
+    use constants
     implicit none
 
 
     ! Platform detection using preprocessor directives
-#ifdef _WIN32
+#if IS_WINDOWS
     logical, parameter :: is_windows = .true.
 #else
     logical, parameter :: is_windows = .false.
@@ -74,7 +75,7 @@ module socket_lib
     ! Function prototypes
     interface
     
-#ifdef _WIN32
+#if IS_WINDOWS
         ! Windows specific socket functions
         function WSAStartup(version, data) bind(C, name="WSAStartup")
             import :: c_int, c_ptr
@@ -147,7 +148,7 @@ module socket_lib
             integer(c_int) :: htonl            ! Output: Converted 32-bit integer in network byte order
         end function
 
-#ifdef _WIN32
+#if IS_WINDOWS
         function errno() bind(C, name="_errno")
             import :: c_int
             integer(c_int) :: errno
@@ -212,7 +213,7 @@ contains
     ! Get errno in a portable way
     function get_errno() result(err)
         integer(c_int) :: err
-#ifdef _WIN32
+#if IS_WINDOWS
         err = errno()
 #else
         integer(c_int), pointer :: errno_ptr
@@ -221,7 +222,7 @@ contains
 #endif
     end function get_errno
 
-#ifndef _WIN32
+#if ! IS_WINDOWS
 
     ! Stub functions for non-Windows platforms
     function WSAStartup(version, data) result(res)
