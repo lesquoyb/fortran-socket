@@ -40,11 +40,15 @@ with open(output_gen_file, 'w') as f:
 print(f"Generated {output_gen_file} for {name_platform} with {len(constants)} constants.")
 print("Now compiling the generated file...")
 binary_path = os.path.join(current_dir, 'constant_generator_' + name_platform + ('.exe' if is_windows else ''))
-os.system(f"gcc -o {binary_path} {output_gen_file}")
-print("Now running the compiled generator...")
-os.system(binary_path)
+if os.system(f"gcc -o {binary_path} {output_gen_file}") != 0:
+    raise RuntimeError("Compilation failed.")
 
-const_code = open(f"tmp_constants.{name_platform}.f90", 'r').readlines()
+print("Now running the compiled generator...")
+tmp_file = f"tmp_constants.{name_platform}.f90"
+if os.system(f"{binary_path} {tmp_file}") != 0:
+    raise RuntimeError("Running the constant generator failed.")
+
+const_code = open(tmp_file, 'r').readlines()
 print("Inserting generated constants into generated_constants.f90...")
 
 # Find the insertion point just after the platform-specific section
@@ -63,5 +67,5 @@ with open(output_file_path, 'w') as f:
 print("Deleting temporary files...")
 os.remove(binary_path)
 os.remove(output_gen_file)
-os.remove(f"tmp_constants.{name_platform}.f90")
+os.remove(tmp_file)
 print("Done.")
