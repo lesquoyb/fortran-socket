@@ -23,29 +23,22 @@
 module socket_lib
 
     use iso_c_binding
-    use constants
+    use socket_lib_constants
     implicit none
 
+    ! Platform detection — gfortran does not define _WIN32 automatically,
+    ! pass -D_WIN32 on the command line when compiling on Windows.
+#if defined(_WIN32)
+#define IS_WINDOWS 1
+#else
+#define IS_WINDOWS 0
+#endif
 
-    ! Platform detection using preprocessor directives
 #if IS_WINDOWS
     logical, parameter :: is_windows = .true.
 #else
     logical, parameter :: is_windows = .false.
 #endif
-
-    ! Socket library constants
-    integer(c_int), parameter :: AF_INET = 2
-    integer(c_int), parameter :: SOCK_STREAM = 1
-    integer(c_int), parameter :: IPPROTO_TCP = 6
-    integer(c_int), parameter :: INADDR_ANY = 0
-    integer(c_int), parameter :: SOMAXCONN = 5
-    integer(c_int), parameter :: SOL_SOCKET = 1
-    integer(c_int), parameter :: SO_REUSEADDR = 2
-    integer(c_int), parameter :: SO_EXCLUSIVEADDRUSE = 4
-    integer(c_int), parameter :: INET_ADDRSTRLEN = 16
-    integer(c_int), parameter :: TCP_NODELAY = 1
-
 
     ! TYPES BINDING
 

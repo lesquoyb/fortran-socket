@@ -1,18 +1,40 @@
+#if defined(_WIN32) || defined(__WIN32) || defined(WIN32)
+
 #include <winsock2.h>
 #include <Ws2tcpip.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <Wsrm.h>
 #include <Wsnwlink.h>
 #include <Mswsock.h>
 #include <AF_Irda.h>
 
-int main() {
+#elif defined(__linux__)
+
+#include <sys/types.h>
+#include <sys/socket.h>   // socket API + AF_* SOCK_* SO_* MSG_* SHUT_*
+#include <netinet/in.h>   // sockaddr_in, sockaddr_in6, IPPROTO_*, INADDR_*, IPV6_*
+#include <netinet/tcp.h>  // TCP_* options (TCP_NODELAY, TCP_KEEPIDLE, etc.)
+#include <arpa/inet.h>    // inet_pton, inet_ntop, htonl, htons, ...
+#include <netdb.h>        // getaddrinfo, getnameinfo, AI_*, NI_*, EAI_*
+#include <unistd.h>       // close, read, write
+#include <errno.h>        // errno
+
+#endif
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: %s <output_file>\n", argv[0]);
+        exit(1);
+    }
+
     FILE* fptr;
 
-    fptr = fopen("tmp_constants.windows.f90", "w");   
+    fptr = fopen(argv[1], "w");   
     if (fptr == NULL) {
-        printf("Error opening file!");
+        printf("Error opening file '%s'!\n", argv[1]);
         exit(1);
     }
 

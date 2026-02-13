@@ -67,8 +67,10 @@ gfortran -cpp constants.f90 socket_lib.f90 my_program.f90 -o my_program
 ### Windows
 
 ```bash
-gfortran -cpp constants.f90 socket_lib.f90 my_program.f90 -lws2_32 -o my_program.exe
+gfortran -cpp -D_WIN32 constants.f90 socket_lib.f90 my_program.f90 -lws2_32 -o my_program.exe
 ```
+
+> **Note:** The `-D_WIN32` flag is required because gfortran's preprocessor does not define Windows platform macros (`_WIN32`, etc.) unlike the C compiler. This flag enables the correct platform-specific code paths.
 
 > **Note:** If you are using a different Fortran compiler that doesn't use gcc as a C compiler, or targeting a different platform than those already in `constants.f90`, you may need to regenerate `constants.f90` using the script in the `tools/` directory. See the [Regenerating constants](#regenerating-constants) section below.
 
@@ -130,9 +132,10 @@ Finally you will need to run the script on that platform to generate the correct
 - Non-blocking sockets and related functions (`select`, `poll`)
 - IPv6 structures (`sockaddr_in6`)
 - Advanced socket types (`sockaddr_un` for Unix domain sockets)
-- Windows-specific features (named pipes, IOCP)
+- Windows-specific features (IOCP)
 - Network interface enumeration (`interfaceinfo`)
 - Legacy protocols (IPX/SPX, Appletalk)
+- all the constants for parameters and return values of most functions are not implemented/unified yet.
 
 ## License
 
