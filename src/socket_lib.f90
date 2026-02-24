@@ -26,14 +26,7 @@ module socket_lib
     use socket_lib_constants
     implicit none
 
-    ! Platform detection — gfortran does not define _WIN32 automatically,
-    ! pass -D_WIN32 on the command line when compiling on Windows.
-#if defined(_WIN32)
-#define IS_WINDOWS 1
-#else
-#define IS_WINDOWS 0
-#endif
-
+#include "platform.h"
 #if IS_WINDOWS
     logical, parameter :: is_windows = .true.
 #else

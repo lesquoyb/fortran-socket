@@ -1,12 +1,7 @@
 module socket_lib_constants
     use iso_c_binding
     implicit none
-
-#if defined(_WIN32) || defined(__WIN32) || defined(WIN32) || defined(__WIN32__)
-#define IS_WINDOWS 1
-#else
-#define IS_WINDOWS 0
-#endif
+#include "platform.h"
 
 #if IS_WINDOWS
     ! Define socket constants for Windows systems

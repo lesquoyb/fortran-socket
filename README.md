@@ -14,7 +14,8 @@ The binding is designed primarily for TCP but exposes a wide enough API for othe
 fortran-socket/
 ├── src/
 │   ├── socket_lib.f90          # Main module: type definitions, function bindings, helpers
-│   └── constants.f90           # Platform-specific socket constants (generated)
+│   ├── constants.f90           # Platform-specific socket constants (generated)
+│   └── platform.h              # Shared platform detection header (IS_WINDOWS macro)
 ├── examples/
 │   └── example_tcp_server.f90  # Minimal TCP server demo
 ├── tools/
@@ -29,8 +30,9 @@ fortran-socket/
 
 ### `src/`
 
-- **`socket_lib.f90`** — The core module. Contains platform detection, type definitions (`sockaddr_in`, `in_addr`, `WSADATA`), C function bindings (`socket`, `bind`, `listen`, `accept`, `send`, `recv`, `close`, etc.), and portable helper functions (`get_errno`, stub `WSA*` functions on non-Windows).
+- **`socket_lib.f90`** — The core module. Contains type definitions (`sockaddr_in`, `in_addr`, `WSADATA`), C function bindings (`socket`, `bind`, `listen`, `accept`, `send`, `recv`, `close`, etc.), and portable helper functions (`get_errno`, stub `WSA*` functions on non-Windows).
 - **`constants.f90`** — A generated module (`socket_lib_constants`) that provides a large set of platform-specific socket option constants (e.g. `SOL_SOCKET`, `TCP_NODELAY`, `SO_REUSEADDR`, error codes, etc.) with separate values for Windows, Linux, and macOS. This file is produced by the tooling in `tools/` and should be regenerated on each target platform.
+- **`platform.h`** — A shared preprocessor header that defines the `IS_WINDOWS` macro based on platform detection. Both `socket_lib.f90` and `constants.f90` include this header via `#include "platform.h"`, avoiding duplicated platform checks.
 
 ### `examples/`
 
@@ -56,21 +58,34 @@ Scripts and templates for regenerating `constants.f90` on your platform. See [to
 
 ## Building
 
-Copy `src/socket_lib.f90` and `src/constants.f90` into your project. Compile with the `-cpp` flag to enable preprocessor directives.
+Copy the `src/` directory into your project. Compile with the `-cpp` flag to enable preprocessor directives and `-Isrc` (or the path to `src/platform.h`) so the preprocessor can find `platform.h`.
 
 ### Linux/macOS
 
 ```bash
-gfortran -cpp constants.f90 socket_lib.f90 my_program.f90 -o my_program
+gfortran -cpp -Isrc src/constants.f90 src/socket_lib.f90 my_program.f90 -o my_program
+```
+
+**OR**
+
+```bash
+gfortran -cpp src/platform.h src/constants.f90 src/socket_lib.f90 my_program.f90 -o my_program
 ```
 
 ### Windows
 
 ```bash
-gfortran -cpp -D_WIN32 constants.f90 socket_lib.f90 my_program.f90 -lws2_32 -o my_program.exe
+gfortran -cpp -D_WIN32 -Isrc src/constants.f90 src/socket_lib.f90 my_program.f90 -lws2_32 -o my_program.exe
 ```
 
-> **Note:** The `-D_WIN32` flag is required because gfortran's preprocessor does not define Windows platform macros (`_WIN32`, etc.) unlike the C compiler. This flag enables the correct platform-specific code paths.
+**OR**
+
+```bash
+gfortran -cpp -D_WIN32 src/platform.h src/constants.f90 src/socket_lib.f90 my_program.f90 -lws2_32 -o my_program.exe
+```
+
+
+> **Note:** On Windows, the `-D_WIN32` flag is required because gfortran's preprocessor does not define Windows platform macros (`_WIN32`, etc.) unlike the C compiler. This flag enables the correct platform-specific code paths.
 
 > **Note:** If you are using a different Fortran compiler that doesn't use gcc as a C compiler, or targeting a different platform than those already in `constants.f90`, you may need to regenerate `constants.f90` using the script in the `tools/` directory. See the [Regenerating constants](#regenerating-constants) section below.
 
