@@ -53,8 +53,7 @@ Scripts and templates for regenerating `constants.f90` on your platform. See [to
 ## Requirements
 
 - A Fortran compiler with `iso_c_binding` support (gfortran, ifx, etc.)
-- Python 3 (only needed for the constant generator script)
-- A C compiler in the case you need to regenerate the constants for your platform or toolchain
+- Python 3 and/or a C compiler if you want to regenerate the constants for a different platform or toolchain
 
 ## Building
 
