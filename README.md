@@ -45,7 +45,7 @@ Scripts and templates for regenerating `constants.f90` on your platform. See [to
 ## Exposed API
 
 
-- **Extended constants** (via `socket_lib_constants`): 200+ platform-specific socket options, protocol-level constants, and error codes. See `constants.f90` for the full list.
+- **Constants** (via `socket_lib_constants`): 200+ platform-specific socket options, protocol-level constants, and error codes. See `constants.f90` for the full list.
 - **Types**: `sockaddr_in`, `in_addr`, `WSADATA` (Windows)
 - **Functions**: `socket`, `bind`, `listen`, `accept`, `send`, `recv`, `close`, `setsockopt`, `htons`, `ntohs`, `htonl`, `inet_addr`, `inet_ntoa`, `getsockname`, `get_errno`
 - **Windows helpers**: `WSAStartup`, `WSACleanup`, `WSAGetLastError` (stubbed as no-ops on non-Windows)
@@ -90,7 +90,7 @@ gfortran -cpp -D_WIN32 src/platform.h src/constants.f90 src/socket_lib.f90 my_pr
 
 ## Usage
 
-Add `use socket_lib` (and optionally `use socket_lib_constants` for extended constants) to your program, then call the API in the same way you would in C.
+Add `use socket_lib` (and optionally `use socket_lib_constants` for the constants) to your program, then call the API in the same way you would in C.
 
 > On Windows you must call `WSAStartup` before creating sockets and `WSACleanup` when done. The module provides an `is_windows` logical constant you can use to conditionally call these functions. Those functions have been implemented as no-ops on non-Windows platforms so you can safely call them unconditionally if you prefer.
 
