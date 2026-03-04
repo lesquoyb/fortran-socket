@@ -6,7 +6,7 @@ A minimal, portable Fortran binding for C sockets. Use POSIX sockets and Winsock
 
 fortran-socket makes C socket functions and structures available in Fortran through `iso_c_binding`. It supports both POSIX sockets (Linux, macOS) and Winsock (Windows) behind the same API — platform differences are handled internally so you don't need `#ifdef` checks in your application code.
 
-The binding is designed primarily for TCP but exposes a wide enough API for other protocols, and adding new bindings is straightforward by following the existing patterns.
+The binding was designed and tested with TCP in mind, but exposes a wide enough API for other protocols, and adding new bindings can be done easily by following the existing patterns.
 
 ## Repository structure
 
