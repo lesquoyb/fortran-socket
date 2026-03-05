@@ -6,6 +6,7 @@
 #include <Wsnwlink.h>
 #include <Mswsock.h>
 #include <AF_Irda.h>
+#include <Mstcpip.h>
 
 #elif defined(__linux__)
 

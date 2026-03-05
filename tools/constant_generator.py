@@ -17,7 +17,7 @@ output_file_content = open(output_file_path,'r').readlines()
 
 fconstants = open(os.path.join(current_dir, 'constants.txt'), 'r').readlines()
 constants = [line.strip() for line in fconstants if not line.startswith('#') and line.strip() != '']
-constants = list(set(constants))  # Remove duplicates
+constants = list(dict.fromkeys(constants))  # Remove duplicates
 
 c_template = open(os.path.join(current_dir, 'constant.template.c'), 'r').readlines()
 template_line = [line for line in c_template if '[var_name]' in line][0]

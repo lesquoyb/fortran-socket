@@ -26,7 +26,12 @@ module socket_lib
     use socket_lib_constants
     implicit none
 
-#include "platform.h"
+#if defined(_WIN32) || defined(__WIN32) || defined(WIN32) || defined(__WIN32__)
+#define IS_WINDOWS 1
+#else
+#define IS_WINDOWS 0
+#endif
+
 #if IS_WINDOWS
     logical, parameter :: is_windows = .true.
 #else
@@ -73,6 +78,20 @@ module socket_lib
         function WSACleanup() bind(C, name="WSACleanup")
             import :: c_int
             integer(c_int) :: WSACleanup
+        end function
+
+        function closesocket(sockfd) bind(C, name="closesocket")
+            import :: c_int
+            integer(c_int), value :: sockfd
+            integer(c_int) :: closesocket
+        end function
+
+        function ioctlsocket(s, cmd, argp) bind(C, name="ioctlsocket")
+            import :: c_int, c_long, c_ptr
+            integer(c_int), value :: s
+            integer(c_long), value :: cmd
+            type(c_ptr), value :: argp
+            integer(c_int) :: ioctlsocket
         end function
 #endif
 
@@ -191,6 +210,29 @@ module socket_lib
             type(in_addr), intent(in) :: addr 
         end function inet_ntoa
 
+        function connect(sockfd, addr, addrlen) bind(C, name="connect")
+            import :: c_int, c_ptr
+            integer(c_int), value :: sockfd
+            type(c_ptr), value :: addr
+            integer(c_int), value :: addrlen
+            integer(c_int) :: connect
+        end function
+
+        function getpeername(sockfd, addr, addrlen) bind(C, name="getpeername")
+            import :: c_int, c_ptr
+            integer(c_int), value :: sockfd
+            type(c_ptr), value :: addr
+            type(c_ptr), value :: addrlen
+            integer(c_int) :: getpeername
+        end function
+
+        function gethostname(name, namelen) bind(C, name="gethostname")
+            import :: c_int, c_char
+            character(kind=c_char), intent(out) :: name(*)
+            integer(c_int), value :: namelen
+            integer(c_int) :: gethostname
+        end function
+
         
     end interface
 
@@ -232,6 +274,25 @@ contains
         integer(c_int) :: res
         res = 0
     end function WSAGetLastError
+
+    function closesocket(sockfd) result(res)
+        integer(c_int), intent(in) :: sockfd
+        integer(c_int) :: res
+        res = close(sockfd)
+    end function closesocket
+
+    function ioctlsocket(s, cmd, argp) result(res)
+        integer(c_int), intent(in) :: s
+        integer(c_long), intent(in) :: cmd
+        type(c_ptr), intent(in) :: argp
+        integer(c_int) :: res
+        ! Stub for non-Windows (use fcntl on POSIX if needed)
+        if (.false.) then
+            print *, s, cmd
+            print *, transfer(argp, 0_c_intptr_t)
+        end if
+        res = 0
+    end function ioctlsocket
 #endif
 
 
