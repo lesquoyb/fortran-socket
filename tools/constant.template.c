@@ -18,6 +18,17 @@
 #include <unistd.h>       // close, read, write
 #include <errno.h>        // errno
 
+#else 
+#include <sys/types.h>
+#include <sys/socket.h>     // socket API + AF_* SOCK_* SO_* MSG_* SHUT_*
+#include <netinet/in.h>     // sockaddr_in, sockaddr_in6, IPPROTO_*, INADDR_*, IPV6_*
+#include <netinet/tcp.h>    // TCP_* options (TCP_NODELAY, TCP_KEEPIDLE, etc.)
+#include <arpa/inet.h>      // inet_pton, inet_ntop, htonl, htons, ...
+#include <netdb.h>          // getaddrinfo, getnameinfo, AI_*, NI_*, EAI_*
+#include <sys/un.h>         // sockaddr_un, AF_UNIX
+#include <sys/event.h>      // kqueue
+#include <unistd.h>         // close, read, write
+#include <errno.h>          // errno
 #endif
 
 
