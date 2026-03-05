@@ -163,12 +163,29 @@ module socket_lib
             import :: c_int
             integer(c_int) :: WSAGetLastError
         end function
+#elif defined(__APPLE__) || defined(__MACH__)
+        ! macOS: get errno via __error
+        function get_errno_location() bind(C, name="__error")
+            import :: c_ptr
+            type(c_ptr) :: get_errno_location
+        end function get_errno_location
 #else
         ! Linux: get errno via __errno_location
         function get_errno_location() bind(C, name="__errno_location")
             import :: c_ptr
             type(c_ptr) :: get_errno_location
         end function get_errno_location
+#endif
+
+#if ! IS_WINDOWS
+        ! POSIX ioctl (used by ioctlsocket stub)
+        function c_ioctl(fd, request, argp) bind(C, name="ioctl")
+            import :: c_int, c_long, c_ptr
+            integer(c_int), value :: fd
+            integer(c_long), value :: request
+            type(c_ptr), value :: argp
+            integer(c_int) :: c_ioctl
+        end function
 #endif
 
 
@@ -286,12 +303,7 @@ contains
         integer(c_long), intent(in) :: cmd
         type(c_ptr), intent(in) :: argp
         integer(c_int) :: res
-        ! Stub for non-Windows (use fcntl on POSIX if needed)
-        if (.false.) then
-            print *, s, cmd
-            print *, transfer(argp, 0_c_intptr_t)
-        end if
-        res = 0
+        res = c_ioctl(s, cmd, argp)
     end function ioctlsocket
 #endif
 

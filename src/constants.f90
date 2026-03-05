@@ -1,7 +1,12 @@
 module socket_lib_constants
     use iso_c_binding
     implicit none
-#include "platform.h"
+
+#if defined(_WIN32) || defined(__WIN32) || defined(WIN32) || defined(__WIN32__)
+#define IS_WINDOWS 1
+#else
+#define IS_WINDOWS 0
+#endif
 
 #if IS_WINDOWS
     ! Define socket constants for Windows systems
@@ -191,94 +196,15 @@ integer(c_int), parameter :: WSAESOCKTNOSUPPORT = 10044
 integer(c_int), parameter :: FIONBIO = -2147195266
 integer(c_int), parameter :: FIONREAD = 1074030207
 integer(c_int), parameter :: SIOCATMARK = 1074033415
+integer(c_int), parameter :: IFF_UP = 1
+integer(c_int), parameter :: IFF_BROADCAST = 2
+integer(c_int), parameter :: IFF_LOOPBACK = 4
+integer(c_int), parameter :: IFF_POINTTOPOINT = 8
+integer(c_int), parameter :: IFF_MULTICAST = 16
 
 #elif defined(__linux__)
     ! Define socket constants for Linux systems
-integer(c_int), parameter :: TCP_KEEPCNT = 6
-integer(c_int), parameter :: IPPROTO_UDP = 17
-integer(c_int), parameter :: IP_MULTICAST_TTL = 33
-integer(c_int), parameter :: SO_TYPE = 3
-integer(c_int), parameter :: EAFNOSUPPORT = 97
-integer(c_int), parameter :: IPV6_MULTICAST_HOPS = 18
-integer(c_int), parameter :: EINVAL = 22
-integer(c_int), parameter :: IPPROTO_IGMP = 2
-integer(c_int), parameter :: IPV6_MTU_DISCOVER = 23
-integer(c_int), parameter :: IPV6_PKTINFO = 50
-integer(c_int), parameter :: SO_SNDLOWAT = 19
-integer(c_int), parameter :: SO_OOBINLINE = 10
-integer(c_int), parameter :: SOCK_DGRAM = 2
-integer(c_int), parameter :: SO_RCVBUF = 8
-integer(c_int), parameter :: IPPROTO_TCP = 6
-integer(c_int), parameter :: TCP_KEEPINTVL = 5
-integer(c_int), parameter :: IP_HDRINCL = 3
-integer(c_int), parameter :: IPV6_ADD_MEMBERSHIP = 20
-integer(c_int), parameter :: IP_MULTICAST_LOOP = 34
-integer(c_int), parameter :: ENOMEM = 12
-integer(c_int), parameter :: SOCK_SEQPACKET = 5
-integer(c_int), parameter :: EACCES = 13
-integer(c_int), parameter :: IP_DROP_SOURCE_MEMBERSHIP = 40
-integer(c_int), parameter :: SOL_SOCKET = 1
-integer(c_int), parameter :: IP_PKTINFO = 8
-integer(c_int), parameter :: ENOBUFS = 105
-integer(c_int), parameter :: IP_ADD_MEMBERSHIP = 35
-integer(c_int), parameter :: TCP_KEEPIDLE = 4
-integer(c_int), parameter :: IP_RECVTOS = 13
-integer(c_int), parameter :: AF_IPX = 4
-integer(c_int), parameter :: TCP_FASTOPEN = 23
-integer(c_int), parameter :: IPV6_JOIN_GROUP = 20
-integer(c_int), parameter :: IPPROTO_ICMP = 1
-integer(c_int), parameter :: SO_SNDTIMEO = 21
-integer(c_int), parameter :: IP_RECVTTL = 12
-integer(c_int), parameter :: TCP_NODELAY = 1
-integer(c_int), parameter :: IPV6_MULTICAST_LOOP = 19
-integer(c_int), parameter :: IPV6_MTU = 24
-integer(c_int), parameter :: IP_ADD_SOURCE_MEMBERSHIP = 39
-integer(c_int), parameter :: IPV6_UNICAST_IF = 76
-integer(c_int), parameter :: SOCK_RAW = 3
-integer(c_int), parameter :: IPPROTO_ICMPV6 = 58
-integer(c_int), parameter :: IP_MTU = 14
-integer(c_int), parameter :: IP_UNICAST_IF = 50
-integer(c_int), parameter :: IPV6_MULTICAST_IF = 17
-integer(c_int), parameter :: SO_BROADCAST = 6
-integer(c_int), parameter :: IPV6_RECVTCLASS = 66
-integer(c_int), parameter :: IP_DROP_MEMBERSHIP = 36
-integer(c_int), parameter :: INADDR_ANY = 0
-integer(c_int), parameter :: AF_INET = 2
-integer(c_int), parameter :: AF_INET6 = 10
-integer(c_int), parameter :: SOMAXCONN = 4096
-integer(c_int), parameter :: IP_MTU_DISCOVER = 10
-integer(c_int), parameter :: SO_DONTROUTE = 5
-integer(c_int), parameter :: IPV6_HDRINCL = 36
-integer(c_int), parameter :: IPV6_UNICAST_HOPS = 16
-integer(c_int), parameter :: SO_RCVTIMEO = 20
-integer(c_int), parameter :: IP_TOS = 1
-integer(c_int), parameter :: AF_IRDA = 23
-integer(c_int), parameter :: SO_REUSEADDR = 2
-integer(c_int), parameter :: IPV6_HOPLIMIT = 52
-integer(c_int), parameter :: IP_BLOCK_SOURCE = 38
-integer(c_int), parameter :: IP_UNBLOCK_SOURCE = 37
-integer(c_int), parameter :: SO_RCVLOWAT = 18
-integer(c_int), parameter :: IP_TTL = 2
-integer(c_int), parameter :: SO_SNDBUF = 7
-integer(c_int), parameter :: IP_OPTIONS = 4
-integer(c_int), parameter :: IPPROTO_IPV6 = 41
-integer(c_int), parameter :: SO_ERROR = 4
-integer(c_int), parameter :: EMFILE = 24
-integer(c_int), parameter :: SO_DEBUG = 1
-integer(c_int), parameter :: SO_KEEPALIVE = 9
-integer(c_int), parameter :: AF_APPLETALK = 5
-integer(c_int), parameter :: IPPROTO_IP = 0
-integer(c_int), parameter :: EPROTONOSUPPORT = 93
-integer(c_int), parameter :: SO_ACCEPTCONN = 30
-integer(c_int), parameter :: ENFILE = 23
-integer(c_int), parameter :: IPV6_DROP_MEMBERSHIP = 21
-integer(c_int), parameter :: SOCK_RDM = 4
-integer(c_int), parameter :: SOCK_STREAM = 1
-integer(c_int), parameter :: IPV6_V6ONLY = 26
-integer(c_int), parameter :: IP_MULTICAST_IF = 32
-integer(c_int), parameter :: SO_LINGER = 13
-integer(c_int), parameter :: AF_UNSPEC = 0
-integer(c_int), parameter :: IPV6_LEAVE_GROUP = 21
+
 
 #else
     ! Define socket constants for macOS
@@ -358,6 +284,7 @@ integer(c_int), parameter :: SO_SNDLOWAT = 4099
 integer(c_int), parameter :: AF_APPLETALK = 16
 integer(c_int), parameter :: SO_ACCEPTCONN = 2
 integer(c_int), parameter :: SO_ERROR = 4103
+integer(c_int), parameter :: FIONBIO = -2147195266
 #endif
 
 
