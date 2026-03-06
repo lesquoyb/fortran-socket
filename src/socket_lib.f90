@@ -163,10 +163,10 @@ module socket_lib
         end function
 
 #if IS_WINDOWS
-        function errno() bind(C, name="_errno")
-            import :: c_int
-            integer(c_int) :: errno
-        end function errno
+        function errno_location() bind(C, name="_errno")
+            import :: c_ptr
+            type(c_ptr) :: errno_location
+        end function errno_location
 
         function WSAGetLastError() bind(C, name="WSAGetLastError")
             import :: c_int
@@ -278,13 +278,13 @@ contains
     ! Get errno in a portable way
     function get_errno() result(err)
         integer(c_int) :: err
-#if IS_WINDOWS
-        err = errno()
-#else
         integer(c_int), pointer :: errno_ptr
+#if IS_WINDOWS
+        call c_f_pointer(errno_location(), errno_ptr)
+#else
         call c_f_pointer(get_errno_location(), errno_ptr)
-        err = errno_ptr
 #endif
+        err = errno_ptr
     end function get_errno
 
 #if ! IS_WINDOWS
