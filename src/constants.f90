@@ -7,111 +7,11 @@ module socket_lib_constants
 #define IS_WINDOWS 1
 #else
 #define IS_WINDOWS 0
-
-    integer(c_int), parameter :: IPPROTO_IP = 0
-    integer(c_int), parameter :: IPPROTO_IPV6 = 41
-    integer(c_int), parameter :: IPPROTO_TCP = 6
-    integer(c_int), parameter :: IPPROTO_UDP = 17
-    integer(c_int), parameter :: SOL_SOCKET = 65535
-    integer(c_int), parameter :: SO_BROADCAST = 32
-    integer(c_int), parameter :: IP_ADD_MEMBERSHIP = 12
-    integer(c_int), parameter :: IP_ADD_SOURCE_MEMBERSHIP = 70
-    integer(c_int), parameter :: IP_BLOCK_SOURCE = 72
-    integer(c_int), parameter :: IP_DROP_MEMBERSHIP = 13
-    integer(c_int), parameter :: IP_DROP_SOURCE_MEMBERSHIP = 71
-    integer(c_int), parameter :: IP_HDRINCL = 2
-    integer(c_int), parameter :: IP_MULTICAST_IF = 9
-    integer(c_int), parameter :: IP_MULTICAST_LOOP = 11
-    integer(c_int), parameter :: IP_MULTICAST_TTL = 10
-    integer(c_int), parameter :: IP_OPTIONS = 1
-    integer(c_int), parameter :: IP_PKTINFO = 26
-    integer(c_int), parameter :: IP_RECVIF = 20
-    integer(c_int), parameter :: IP_RECVTOS = 27
-    integer(c_int), parameter :: IP_RECVTTL = 24
-    integer(c_int), parameter :: IP_TOS = 3
-    integer(c_int), parameter :: IP_TTL = 4
-    integer(c_int), parameter :: IP_UNBLOCK_SOURCE = 73
-    integer(c_int), parameter :: EACCES = 13
-    integer(c_int), parameter :: EAFNOSUPPORT = 47
-    integer(c_int), parameter :: EINVAL = 22
-    integer(c_int), parameter :: EMFILE = 24
-    integer(c_int), parameter :: ENFILE = 23
-    integer(c_int), parameter :: ENOBUFS = 55
-    integer(c_int), parameter :: ENOMEM = 12
-    integer(c_int), parameter :: EPROTONOSUPPORT = 43
-    integer(c_int), parameter :: IPV6_JOIN_GROUP = 12
-    integer(c_int), parameter :: IPV6_LEAVE_GROUP = 13
-    integer(c_int), parameter :: IPV6_MULTICAST_HOPS = 10
-    integer(c_int), parameter :: IPV6_MULTICAST_IF = 9
-    integer(c_int), parameter :: IPV6_MULTICAST_LOOP = 11
-    integer(c_int), parameter :: IPV6_RECVTCLASS = 35
-    integer(c_int), parameter :: IPV6_UNICAST_HOPS = 4
-    integer(c_int), parameter :: IPV6_V6ONLY = 27
-    integer(c_int), parameter :: TCP_KEEPCNT = 258
-    integer(c_int), parameter :: TCP_NODELAY = 1
-    integer(c_int), parameter :: TCP_FASTOPEN = 261
-    integer(c_int), parameter :: TCP_KEEPINTVL = 257
-    integer(c_int), parameter :: SO_ACCEPTCONN = 2
-    integer(c_int), parameter :: SO_DEBUG = 1
-    integer(c_int), parameter :: SO_DONTROUTE = 16
-    integer(c_int), parameter :: SO_ERROR = 4103
-    integer(c_int), parameter :: SO_KEEPALIVE = 8
-    integer(c_int), parameter :: SO_LINGER = 128
-    integer(c_int), parameter :: SO_OOBINLINE = 256
-    integer(c_int), parameter :: SO_RCVBUF = 4098
-    integer(c_int), parameter :: SO_RCVLOWAT = 4100
-    integer(c_int), parameter :: SO_RCVTIMEO = 4102
-    integer(c_int), parameter :: SO_REUSEADDR = 4
-    integer(c_int), parameter :: SO_SNDBUF = 4097
-    integer(c_int), parameter :: SO_SNDLOWAT = 4099
-    integer(c_int), parameter :: SO_SNDTIMEO = 4101
-    integer(c_int), parameter :: SO_TYPE = 4104
-    integer(c_int), parameter :: SO_USELOOPBACK = 64
-    integer(c_int), parameter :: SOMAXCONN = 128
-    integer(c_int), parameter :: INADDR_ANY = 0
-    integer(c_int), parameter :: AF_UNSPEC = 0
-    integer(c_int), parameter :: AF_INET = 2
-    integer(c_int), parameter :: AF_IPX = 23
-    integer(c_int), parameter :: AF_APPLETALK = 16
-    integer(c_int), parameter :: AF_NETBIOS = 33
-    integer(c_int), parameter :: AF_INET6 = 30
-    integer(c_int), parameter :: SOCK_STREAM = 1
-    integer(c_int), parameter :: SOCK_DGRAM = 2
-    integer(c_int), parameter :: SOCK_RAW = 3
-    integer(c_int), parameter :: SOCK_RDM = 4
-    integer(c_int), parameter :: SOCK_SEQPACKET = 5
-    integer(c_int), parameter :: IPPROTO_ICMP = 1
-    integer(c_int), parameter :: IPPROTO_IGMP = 2
-    integer(c_int), parameter :: IPPROTO_ICMPV6 = 58
-    integer(c_long), parameter :: FIONBIO = 2147772030
-    integer(c_long), parameter :: FIONREAD = 1074030207
-    integer(c_long), parameter :: SIOCATMARK = 1074033415
-    integer(c_int), parameter :: IFNAMSIZ = 16
-    integer(c_int), parameter :: IFF_UP = 1
-    integer(c_int), parameter :: IFF_BROADCAST = 2
-    integer(c_int), parameter :: IFF_LOOPBACK = 8
-    integer(c_int), parameter :: IFF_MULTICAST = 32768
-    integer(c_long), parameter :: SIOCSIFDSTADDR = 2149607694
-    integer(c_long), parameter :: SIOCSIFVLAN = 2149607806
-    integer(c_long), parameter :: SIOCGIFADDR = 3223349537
-    integer(c_long), parameter :: SIOCSIFNETMASK = 2149607702
-    integer(c_long), parameter :: SIOCSIFBRDADDR = 2149607699
-    integer(c_long), parameter :: SIOCSIFFLAGS = 2149607696
-    integer(c_long), parameter :: SIOCGIFFLAGS = 3223349521
-    integer(c_long), parameter :: SIOCSIFMETRIC = 2149607704
-    integer(c_long), parameter :: SIOCSIFMTU = 2149607732
-    integer(c_long), parameter :: SIOCGIFMETRIC = 3223349527
-    integer(c_long), parameter :: SIOCGIFMTU = 3223349555
-    integer(c_long), parameter :: SIOCGIFDSTADDR = 3223349538
-    integer(c_long), parameter :: SIOCGIFVLAN = 3223349631
-    integer(c_long), parameter :: SIOCGIFNETMASK = 3223349541
-    integer(c_long), parameter :: SIOCGIFBRDADDR = 3223349539
-    integer(c_long), parameter :: SIOCGIFCONF = 3222038820
-    integer(c_long), parameter :: SIOCSIFADDR = 2149607692
 #endif
 
 #if IS_WINDOWS
     ! Define socket constants for Windows systems
+    ! @CONSTANTS_WINDOWS
 
     integer(c_int), parameter :: IPPROTO_IP = 0
     integer(c_int), parameter :: IPPROTO_IPV6 = 41
@@ -307,6 +207,7 @@ module socket_lib_constants
 
 #elif defined(__linux__)
     ! Define socket constants for Linux systems
+    ! @CONSTANTS_LINUX
 
     integer(c_int), parameter :: IPPROTO_IP = 0
     integer(c_int), parameter :: IPPROTO_IPV6 = 41
@@ -443,6 +344,7 @@ module socket_lib_constants
 
 #else
     ! Define socket constants for macOS
+    ! @CONSTANTS_MACOS
 
     integer(c_int), parameter :: IPPROTO_IP = 0
     integer(c_int), parameter :: IPPROTO_IPV6 = 41
