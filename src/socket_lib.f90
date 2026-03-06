@@ -59,8 +59,17 @@ module socket_lib
         character(kind=c_char) :: sin_zero(8)  ! Padding
     end type sockaddr_in
 
+    type, bind(C) :: sockaddr_in6
+        integer(c_int16_t) :: sin6_family
+        integer(c_int16_t) :: sin6_port
+        integer(c_int32_t) :: sin6_flowinfo
+        integer(c_int8_t), dimension(16) :: s_addr
+        integer(c_int32_t) :: sin6_scope_id
+    end type sockaddr_in6
+
+
     type, bind(C) :: in_addr
-        integer(c_int) :: s_addr
+        integer(c_int32_t) :: s_addr
     end type in_addr
 
     ! Function prototypes
@@ -221,10 +230,13 @@ module socket_lib
             integer(c_int) :: getsockname
         end function getsockname
 
+        ! C signature: char *inet_ntoa(struct in_addr in)
+        ! struct in_addr is a single uint32_t passed by value.
+        ! Fortran cannot import module types into interface blocks,
+        ! so we use the equivalent integer(c_int32_t), value.
         type(c_ptr) function inet_ntoa(addr) bind(C, name="inet_ntoa")
             use iso_c_binding
-            import :: in_addr
-            type(in_addr), intent(in) :: addr 
+            integer(c_int32_t), value :: addr
         end function inet_ntoa
 
         function connect(sockfd, addr, addrlen) bind(C, name="connect")
