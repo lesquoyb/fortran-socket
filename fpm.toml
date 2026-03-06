@@ -1,0 +1,12 @@
+name = "fortran-socket"
+version = "0.1.0"
+license = "MIT"
+author = "IRD/UMMISCO - IRIT/Université Toulouse Capitole - Baptiste Lesquoy"
+description = "Cross-platform Fortran socket library - binding of the C socket library"
+
+[library]
+source-dir = "src"
+
+[preprocess]
+[preprocess.cpp]
+suffixes = ["f90"]

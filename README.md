@@ -88,6 +88,34 @@ gfortran -cpp -D_WIN32 src/platform.h src/constants.f90 src/socket_lib.f90 my_pr
 
 > **Note:** If you are using a different Fortran compiler that doesn't use gcc as a C compiler, or targeting a different platform than those already in `constants.f90`, you may need to regenerate `constants.f90` using the script in the `tools/` directory. See the [Regenerating constants](#regenerating-constants) section below.
 
+### Building with fpm
+
+fortran-socket can be used as an [fpm](https://fpm.fortran-lang.org/) dependency. Add it to your `fpm.toml`:
+
+```toml
+[dependencies]
+fortran-socket = { path = "deps/fortran-socket" }
+```
+
+On **Linux and macOS**, no extra configuration is needed:
+
+```bash
+fpm build
+```
+
+On **Windows**, fpm's preprocessor may not define the `_WIN32` macro automatically. In this case, you must pass it as a compiler flag:
+
+```bash
+fpm build --flag "-D_WIN32"
+```
+
+You also need to link against `ws2_32`. In your main project's `fpm.toml`:
+
+```toml
+[build]
+link = ["ws2_32"]
+```
+
 ## Usage
 
 Add `use socket_lib` (and optionally `use socket_lib_constants` for the constants) to your program, then call the API in the same way you would in C.
