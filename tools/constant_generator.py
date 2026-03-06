@@ -6,11 +6,12 @@ is_windows = os.name == 'nt'
 is_linux = platform.system() == 'Linux'
 name_platform = 'linux' if is_linux else 'windows' if is_windows else 'macos'
 
-# Mapping from Fortran iso_c_binding types to C printf format and cast
+# C printf format and cast for each Fortran iso_c_binding type.
+# Each type must use the matching C type to preserve the correct value.
 TYPE_INFO = {
-    'c_int':    ('%d',  '(int)'),
-    'c_long':   ('%ld', '(long)'),
-    'c_short':  ('%hd', '(short)'),
+    'c_int':   ('%d',  '(int)'),
+    'c_long':  ('%ld', '(long)'),
+    'c_short': ('%hd', '(short)'),
 }
 
 # First we create a clean output file based on constants.template.f90 if needed
@@ -44,7 +45,10 @@ output_lines = []
 
 for name, ftype in constants_with_types:
     fmt, cast = TYPE_INFO.get(ftype, ('%d', '(int)'))
-    line = f'    fprintf(fptr, "    integer({ftype}), parameter :: {name} = {fmt}\\n", {cast}{name});\n'
+    # Add Fortran kind suffix (e.g. _c_long) for non-default types so that
+    # large literals are not rejected by gfortran's range check.
+    kind_suffix = f'_{ftype}' if ftype != 'c_int' else ''
+    line = f'    fprintf(fptr, "    integer({ftype}), parameter :: {name} = {fmt}{kind_suffix}\\n", {cast}{name});\n'
     output_lines.append("#ifdef " + name + "\n")
     output_lines.append(line)
     output_lines.append("#endif\n")
