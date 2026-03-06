@@ -6,6 +6,13 @@ is_windows = os.name == 'nt'
 is_linux = platform.system() == 'Linux'
 name_platform = 'linux' if is_linux else 'windows' if is_windows else 'macos'
 
+# Mapping from Fortran iso_c_binding types to C printf format and cast
+TYPE_INFO = {
+    'c_int':    ('%d',  '(int)'),
+    'c_long':   ('%ld', '(long)'),
+    'c_short':  ('%hd', '(short)'),
+}
+
 # First we create a clean output file based on constants.template.f90 if needed
 current_dir = os.path.dirname(__file__)
 output_file_path = os.path.join(current_dir, 'generated_constants.f90')
@@ -15,18 +22,30 @@ if not os.path.exists(output_file_path):
     open(output_file_path, 'w').writelines(template_fortran)
 output_file_content = open(output_file_path,'r').readlines()
 
+# Parse constants.txt: each line is "CONST_NAME [type]"
+# If type is omitted, defaults to c_int
 fconstants = open(os.path.join(current_dir, 'constants.txt'), 'r').readlines()
-constants = [line.strip() for line in fconstants if not line.startswith('#') and line.strip() != '']
-constants = list(dict.fromkeys(constants))  # Remove duplicates
+constants_with_types = []
+seen = set()
+for line in fconstants:
+    line = line.strip()
+    if line.startswith('#') or line == '':
+        continue
+    parts = line.split()
+    name = parts[0]
+    ftype = parts[1] if len(parts) > 1 else 'c_int'
+    if name not in seen:
+        constants_with_types.append((name, ftype))
+        seen.add(name)
 
 c_template = open(os.path.join(current_dir, 'constant.template.c'), 'r').readlines()
 template_line = [line for line in c_template if '[var_name]' in line][0]
 output_lines = []
 
-for const in constants:
-    line = template_line
-    line = line.replace('[var_name]', const)
-    output_lines.append("#ifdef " + const + "\n")
+for name, ftype in constants_with_types:
+    fmt, cast = TYPE_INFO.get(ftype, ('%d', '(int)'))
+    line = f'    fprintf(fptr, "    integer({ftype}), parameter :: {name} = {fmt}\\n", {cast}{name});\n'
+    output_lines.append("#ifdef " + name + "\n")
     output_lines.append(line)
     output_lines.append("#endif\n")
 insert_index = c_template.index(template_line)
@@ -37,7 +56,7 @@ output_gen_file = os.path.join(current_dir, output_gen_name)
 with open(output_gen_file, 'w') as f:
     f.writelines(output_generator)
 
-print(f"Generated {output_gen_file} for {name_platform} with {len(constants)} constants.")
+print(f"Generated {output_gen_file} for {name_platform} with {len(constants_with_types)} constants.")
 print("Now compiling the generated file...")
 binary_path = os.path.join(current_dir, 'constant_generator_' + name_platform + ('.exe' if is_windows else ''))
 if os.system(f"gcc -o {binary_path} {output_gen_file}") != 0:
