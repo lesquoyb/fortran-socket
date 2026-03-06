@@ -207,6 +207,14 @@ module socket_lib
             integer(c_int) :: setsockopt
         end function
 
+        function getsockopt(sockfd, level, optname, optval, optlen) bind(C, name="getsockopt")
+            use, intrinsic :: iso_c_binding
+            integer(c_int), value :: sockfd, level, optname
+            type(c_ptr), value :: optval
+            type(c_ptr), value :: optlen
+            integer(c_int) :: getsockopt
+        end function
+
         function inet_addr(cp) bind(C, name="inet_addr")
             use iso_c_binding
             character(kind=c_char), intent(in) :: cp(*)  ! C string (null-terminated)
