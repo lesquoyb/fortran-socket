@@ -11,12 +11,15 @@ module socket_lib_constants
 
 #if IS_WINDOWS
     ! Define socket constants for Windows systems
+    ! @CONSTANTS_WINDOWS
 
 #elif defined(__linux__)
     ! Define socket constants for Linux systems
+    ! @CONSTANTS_LINUX
 
 #else
     ! Define socket constants for macOS
+    ! @CONSTANTS_MACOS
 
 #endif
 

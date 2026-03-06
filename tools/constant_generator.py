@@ -70,11 +70,14 @@ if os.system(f"{binary_path} {tmp_file}") != 0:
 const_code = open(tmp_file, 'r').readlines()
 print("Inserting generated constants into generated_constants.f90...")
 
-# Find the insertion point just after the platform-specific section
-insert_index = output_file_content.index([line for line in output_file_content \
-                                       if '#if IS_WINDOWS' in line and is_windows \
-                                            or '__linux__' in line and is_linux \
-                                            or '#else' in line and not (is_windows or is_linux)][0]) + 2
+# Find the insertion point just after the platform marker
+PLATFORM_MARKERS = {
+    'windows': '! @CONSTANTS_WINDOWS',
+    'linux':   '! @CONSTANTS_LINUX',
+    'macos':   '! @CONSTANTS_MACOS',
+}
+marker = PLATFORM_MARKERS[name_platform]
+insert_index = next(i for i, line in enumerate(output_file_content) if marker in line) + 1
 
 final_fortran = output_file_content[:insert_index] + const_code + output_file_content[insert_index:]
 

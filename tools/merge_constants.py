@@ -11,10 +11,11 @@ from each platform's section and combines them into one file.
 import sys
 import os
 
+# Explicit markers inserted in the template to delimit where constants go.
 MARKERS = {
-    'windows': '#if IS_WINDOWS',
-    'linux':   '#elif defined(__linux__)',
-    'macos':   '#else',
+    'windows': '! @CONSTANTS_WINDOWS',
+    'linux':   '! @CONSTANTS_LINUX',
+    'macos':   '! @CONSTANTS_MACOS',
 }
 
 # End markers: the line that terminates a platform section
@@ -84,18 +85,14 @@ def main():
                 # by deferring. Instead, insert a placeholder we replace below.
                 pass
 
-    # Simpler approach: rebuild line by line, inserting after comment lines
+    # Rebuild line by line, inserting constants after matching comment lines
     output_lines = []
     i = 0
     while i < len(template):
         output_lines.append(template[i])
         for platform, marker in MARKERS.items():
             if marker in template[i]:
-                # Next line is the comment
-                if i + 1 < len(template):
-                    i += 1
-                    output_lines.append(template[i])  # comment line
-                # Insert constants
+                # Insert constants right after this comment line
                 consts = platform_constants.get(platform, [])
                 if consts:
                     output_lines.append('\n')
