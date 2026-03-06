@@ -217,7 +217,7 @@ module socket_lib
             use iso_c_binding
             integer(c_int), value :: sockfd
             type(c_ptr), value :: addr
-            integer(c_int), value :: addrlen
+            type(c_ptr), value :: addrlen
             integer(c_int) :: getsockname
         end function getsockname
 
