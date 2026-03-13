@@ -341,6 +341,9 @@ module socket_lib_constants
     integer(c_long), parameter :: SIOCSIFADDR = 35094_c_long
     integer(c_long), parameter :: SIOCSIFHWBROADCAST = 35127_c_long
     integer(c_long), parameter :: SIOCSIFTXQLEN = 35139_c_long
+    integer(c_int), parameter :: F_GETFL = 3
+    integer(c_int), parameter :: F_SETFL = 4
+    integer(c_int), parameter :: O_NONBLOCK = 2048
 
 #else
     ! Define socket constants for macOS
@@ -446,6 +449,9 @@ module socket_lib_constants
     integer(c_long), parameter :: SIOCGIFBRDADDR = 3223349539_c_long
     integer(c_long), parameter :: SIOCGIFCONF = 3222038820_c_long
     integer(c_long), parameter :: SIOCSIFADDR = 2149607692_c_long
+    integer(c_int), parameter :: F_GETFL = 3
+    integer(c_int), parameter :: F_SETFL = 4
+    integer(c_int), parameter :: O_NONBLOCK = 4
 
 #endif
 
