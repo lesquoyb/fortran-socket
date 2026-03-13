@@ -21,6 +21,7 @@
 #include <errno.h>        // errno
 #include <linux/sockios.h>
 #include <net/if.h>
+#include <fcntl.h>
 
 #else 
 #include <sys/types.h>
@@ -38,6 +39,8 @@
 #include <net/if.h>         // struct ifreq, IFNAMSIZ, IFF_* flags
 #include <net/if_dl.h>      // struct sockaddr_dl (MAC addr via AF_LINK)
 #include <ifaddrs.h>
+#include <fcntl.h>
+
 #endif
 
 

@@ -195,6 +195,15 @@ module socket_lib
             type(c_ptr), value :: argp
             integer(c_int) :: c_ioctl
         end function
+
+        ! POSIX fcntl (3-arg form: fd, cmd, arg)
+        function c_fcntl(fd, cmd, arg) bind(C, name="fcntl")
+            import :: c_int
+            integer(c_int), value :: fd
+            integer(c_int), value :: cmd
+            integer(c_int), value :: arg
+            integer(c_int) :: c_fcntl
+        end function
 #endif
 
 
@@ -326,6 +335,61 @@ contains
         res = c_ioctl(s, cmd, argp)
     end function ioctlsocket
 #endif
+
+    ! Set socket non-blocking mode.
+    ! enable: 1 = non-blocking, 0 = blocking.
+    ! Returns 0 on success, non-zero on failure.
+    function set_nonblocking(fd, enable) result(res)
+        integer(c_int), intent(in) :: fd, enable
+        integer(c_int) :: res
+#if IS_WINDOWS
+        integer(c_long), target :: mode
+        mode = int(enable, c_long)
+        res = ioctlsocket(fd, FIONBIO, c_loc(mode))
+#else
+        integer(c_int) :: flags
+        flags = c_fcntl(fd, F_GETFL, 0)
+        if (flags == -1) then
+            res = -1
+            return
+        end if
+        if (enable /= 0) then
+            flags = ior(flags, O_NONBLOCK)
+        else
+            flags = iand(flags, not(O_NONBLOCK))
+        end if
+        res = c_fcntl(fd, F_SETFL, flags)
+#endif
+    end function set_nonblocking
+
+    ! Poll the status of a non-blocking connect().
+    ! Returns: 1 = connected, 0 = still pending,
+    !         -1 = getsockopt failed, -N = failed with SO_ERROR == N
+    function poll_connect(sockfd) result(res)
+        integer(c_int), intent(in) :: sockfd
+        integer(c_int) :: res
+        integer(c_int), target :: err, elen
+        type(sockaddr_in), target :: peer
+        integer(c_int), target :: plen
+
+        err  = 0
+        elen = 4  ! sizeof(int)
+        if (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, c_loc(err), c_loc(elen)) /= 0) then
+            res = -1
+            return
+        end if
+        if (err /= 0) then
+            res = -err
+            return
+        end if
+        ! SO_ERROR == 0: confirm with getpeername
+        plen = int(c_sizeof(peer), c_int)
+        if (getpeername(sockfd, c_loc(peer), c_loc(plen)) == 0) then
+            res = 1   ! connected
+        else
+            res = 0   ! still pending
+        end if
+    end function poll_connect
 
 
 end module socket_lib

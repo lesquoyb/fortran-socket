@@ -30,7 +30,7 @@ fortran-socket/
 
 ### `src/`
 
-- **`socket_lib.f90`** — The core module. Contains type definitions (`sockaddr_in`, `in_addr`, `WSADATA`), C function bindings (`socket`, `bind`, `listen`, `accept`, `send`, `recv`, `close`, etc.), and portable helper functions (`get_errno`, stub `WSA*` functions on non-Windows).
+- **`socket_lib.f90`** — The core module. Contains type definitions (`sockaddr_in`, `in_addr`, `WSADATA`), C function bindings (`socket`, `bind`, `listen`, `accept`, `send`, `recv`, `close`, `connect`, `getpeername`, etc.), and portable helper functions (`get_errno`, `set_nonblocking`, `poll_connect`, stub `WSA*` functions on non-Windows).
 - **`constants.f90`** — A generated module (`socket_lib_constants`) that provides a large set of platform-specific socket option constants (e.g. `SOL_SOCKET`, `TCP_NODELAY`, `SO_REUSEADDR`, error codes, etc.) with separate values for Windows, Linux, and macOS. This file is produced by the tooling in `tools/` and should be regenerated on each target platform.
 - **`platform.h`** — A shared preprocessor header that defines the `IS_WINDOWS` macro based on platform detection. Both `socket_lib.f90` and `constants.f90` include this header via `#include "platform.h"`, avoiding duplicated platform checks.
 
@@ -47,7 +47,8 @@ Scripts and templates for regenerating `constants.f90` on your platform. See [to
 
 - **Constants** (via `socket_lib_constants`): 200+ platform-specific socket options, protocol-level constants, and error codes. See `constants.f90` for the full list.
 - **Types**: `sockaddr_in`, `in_addr`, `WSADATA` (Windows)
-- **Functions**: `socket`, `bind`, `listen`, `accept`, `send`, `recv`, `close`, `setsockopt`, `htons`, `ntohs`, `htonl`, `inet_addr`, `inet_ntoa`, `getsockname`, `get_errno`
+- **C bindings**: `socket`, `bind`, `listen`, `accept`, `send`, `recv`, `close`, `connect`, `getpeername`, `getsockname`, `gethostname`, `setsockopt`, `getsockopt`, `htons`, `ntohs`, `htonl`, `inet_addr`, `inet_ntoa`, `ioctlsocket` (Windows) / `ioctl` (POSIX), `fcntl` (POSIX)
+- **Portable helpers**: `get_errno`, `set_nonblocking`, `poll_connect`, `closesocket` (on POSIX, wraps `close`), `ioctlsocket` (on POSIX, wraps `ioctl`)
 - **Windows helpers**: `WSAStartup`, `WSACleanup`, `WSAGetLastError` (stubbed as no-ops on non-Windows)
 
 ## Requirements
@@ -124,6 +125,38 @@ Add `use socket_lib` (and optionally `use socket_lib_constants` for the constant
 
 > Use the provided `get_errno` function to retrieve the last socket error code in a portable way, as Windows and POSIX systems expose it differently.
 
+### Non-blocking sockets
+
+The module provides two portable helper functions for non-blocking socket operations:
+
+- **`set_nonblocking(fd, enable)`** — Set a socket to non-blocking (`enable=1`) or blocking (`enable=0`) mode. Returns 0 on success. On Windows this uses `ioctlsocket` with `FIONBIO`; on POSIX it uses `fcntl` with `F_GETFL`/`F_SETFL`/`O_NONBLOCK`, avoiding the unreliable variadic `ioctl()` ABI when called from Fortran.
+
+- **`poll_connect(sockfd)`** — Check the status of a non-blocking `connect()`. Returns:
+  - `1` = connected
+  - `0` = still pending
+  - `-1` = `getsockopt` failed
+  - `-N` = connection failed with `SO_ERROR == N`
+
+Example usage:
+
+```fortran
+use socket_lib
+integer(c_int) :: fd, res
+
+! Set non-blocking
+res = set_nonblocking(fd, 1)
+
+! Start non-blocking connect...
+res = connect(fd, c_loc(addr), int(c_sizeof(addr), c_int))
+
+! Later, poll for completion
+res = poll_connect(fd)
+if (res == 1) then
+    ! Connected, restore blocking mode
+    res = set_nonblocking(fd, 0)
+end if
+```
+
 ### Minimal TCP server (blocking, single client)
 
 A complete example is available at [examples/example_tcp_server.f90](examples/example_tcp_server.f90). It creates a server on port 8181, waits for a single client to connect, sends a message, waits 5 seconds, and shuts down.
@@ -166,12 +199,11 @@ Finally you will need to run the script on that platform to generate the correct
 - Functions that take pointers expect `c_loc`ed arguments and `target` variables.
 - On Windows, link against `ws2_32` and call `WSAStartup`/`WSACleanup`.
 - Strings passed to C must be `kind=c_char` and null-terminated.
-- To add more socket functions (e.g. `connect`), add their C bindings in the module following the existing patterns.
+- To add more socket functions, add their C bindings in the module following the existing patterns.
 
 ## Not supported (yet)
 
 - IOCTL / WSAIoctl functions and constants
-- Non-blocking sockets and related functions (`select`, `poll`)
 - IPv6 structures (`sockaddr_in6`)
 - Advanced socket types (`sockaddr_un` for Unix domain sockets)
 - Windows-specific features (IOCP)
